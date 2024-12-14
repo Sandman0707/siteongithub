@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment Rental Platform</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #4285F4; /* Google blue */
+            color: white;
+        }
+        header .profile, header .cart, header .listing {
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 0px;
+            background-color: #fff;
+            color: #4285F4;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        header .profile:hover, header .cart:hover, header .listing:hover {
+            background-color: #e7e7e7;
+        }
+        nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        nav button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #fff;
+            color: #4285F4;
+            border: 2px solid #4285F4;
+            cursor: pointer;
+            border-radius: 0px; /* Square buttons */
+            transition: background-color 0.3s ease;
+        }
+        nav button:hover {
+            background-color: #4285F4;
+            color: white;
+        }
+        .container {
+            flex-grow: 1;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Flex grid with dynamic number of columns */
+            gap: 20px; /* Space between items */
+        }
+        .item {
+            padding: 20px;
+            background-color: white; /* White background for items */
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-sizing: border-box;
+            border-radius: 0px; /* Square buttons */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .item:hover {
+            transform: scale(1.05); /* Slightly enlarge the item when hovered */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Add shadow when hovering */
+        }
+        .item button {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 0px; /* Square buttons */
+            margin-top: 10px;
+        }
+        .item button:hover {
+            background-color: #357AE8;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #f1f1f1;
+            margin-top: 20px;
+        }
+        .header-center {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .header-center h2 {
+            margin: 0;
+        }
+        .no-items {
+            text-align: center;
+            font-size: 18px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Rental</h1>
+        <div>
+
+            <span class="cart" onclick="window.location.href='cartpage.html'">Rented</span>
+            <span class="listing" onclick="window.location.href='listing.html'">Create Listing</span>
+        </div>
+    </header>
+
+    <nav>
+
+    </nav>
+
+    <div class="container">
+        <div class="header-center">
+            <h2></h2>
+        </div>
+        <div id="availableItems"></div>
+        <div id="noItemsMessage" class="no-items" style="display: none;">
+            Oh, there's nothing here.
+        </div>
+    </div>
+
+
+    <script>
+        const userItems = JSON.parse(localStorage.getItem('userItems')) || [];
+
+        function updateAvailableItems() {
+            const availableItems = document.getElementById('availableItems');
+            const noItemsMessage = document.getElementById('noItemsMessage');
+            availableItems.innerHTML = '';
+
+            // Проверка на наличие товаров
+            if (userItems.length === 0) {
+                noItemsMessage.style.display = 'block'; // Показываем сообщение, если товаров нет
+            } else {
+                noItemsMessage.style.display = 'none'; // Скрываем сообщение, если товары есть
+                userItems.forEach((item) => {
+                    const div = document.createElement('div');
+                    div.className = 'item';
+                    
+                    // Проверка на цену и название товара
+                    const itemPrice = item.price ? `$${item.price}/day` : 'Price not available';
+                    const itemName = item.name || 'Unnamed item';
+
+                    div.innerHTML = `
+                        <h3>${itemName}</h3>
+                        <p>${itemPrice}</p> <!-- Display price if available -->
+                        <button onclick="addToCart('${item.name}')">But it </button>
+                    `;
+                    availableItems.appendChild(div);
+                });
+            }
+        }
+
+        function addToCart(itemName) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const item = userItems.find(i => i.name === itemName);
+            if (item) {
+                cart.push(item);
+                localStorage.setItem('cart', JSON.stringify(cart));
+            }
+        }
+
+        updateAvailableItems();
+    </script>
+</body>
+</html>

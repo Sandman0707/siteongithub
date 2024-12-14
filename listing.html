@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create and Manage Listings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #4285F4;
+            color: white;
+        }
+        .container {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 300px;
+            margin: auto;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 0px; /* Square buttons */
+        }
+        button {
+            background-color: #4285F4;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #357AE8;
+        }
+        .listings {
+            margin-top: 20px;
+        }
+        .item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .item button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 0px; /* Square buttons */
+        }
+        .item button:hover {
+            background-color: #d32f2f;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #f1f1f1;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Create Listing</h1>
+    </header>
+
+    <div class="container">
+        <form id="createForm">
+            <label for="equipmentName">Equipment Name:</label>
+            <input type="text" id="equipmentName" required>
+
+            <label for="equipmentPrice">Price per Day:</label>
+            <input type="number" id="equipmentPrice" required>
+
+            <button type="submit">Publish</button>
+        </form>
+
+        <div class="listings">
+            <h2>Your Listings</h2>
+            <div id="userListings"></div>
+        </div>
+    </div>
+
+
+    <script>
+        const userItems = JSON.parse(localStorage.getItem('userItems')) || [];
+
+        document.getElementById('createForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('equipmentName').value;
+            const price = document.getElementById('equipmentPrice').value;
+
+            const newItem = { name, price };
+            userItems.push(newItem);
+            localStorage.setItem('userItems', JSON.stringify(userItems));
+
+            document.getElementById('createForm').reset();
+            updateListings();
+        });
+
+        function updateListings() {
+            const listingsContainer = document.getElementById('userListings');
+            listingsContainer.innerHTML = '';
+
+            userItems.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerHTML = `
+                    <span>${item.name} - $${item.price}/day</span>
+                    <button onclick="deleteListing(${index})">Delete</button>
+                `;
+                listingsContainer.appendChild(div);
+            });
+        }
+
+        function deleteListing(index) {
+            userItems.splice(index, 1);
+            localStorage.setItem('userItems', JSON.stringify(userItems));
+            updateListings();
+        }
+
+        // Initialize the listings on page load
+        updateListings();
+    </script>
+</body>
+</html>
