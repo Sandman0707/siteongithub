@@ -1,10 +1,4 @@
 @echo off
-:: Меняем Machine GUID
-reg delete HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography /v MachineGuid /f
-powershell -Command "[guid]::NewGuid().ToString() | Set-Content -Path 'HKLM:\SOFTWARE\Microsoft\Cryptography\MachineGuid'"
-
-echo [INFO] Machine GUID изменён!
-
 :: Меняем MAC-адрес (адаптер Ethernet)
 setlocal enabledelayedexpansion
 set /a num=10 + %random% %% 246
